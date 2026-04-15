@@ -1,0 +1,127 @@
+{
+  "enable_switch": {
+    "type": "bool",
+    "description": "回复主链路总开关",
+    "hint": "关闭后不创建候选回复任务、不接管回复权、不 stop_event；但若消息按存储策略本该写入历史账本，仍会落盘。关闭读空气 ≠ 关闭记账。",
+    "default": true
+  },
+  "group_list_mode": {
+    "type": "string",
+    "description": "群聊准入模式",
+    "options": ["blacklist", "whitelist"],
+    "default": "blacklist"
+  },
+  "group_list": {
+    "type": "list",
+    "description": "群聊准入列表（群号字符串，语义由 group_list_mode 决定）",
+    "default": []
+  },
+  "private_list_mode": {
+    "type": "string",
+    "description": "私聊准入模式（默认 whitelist + 空列表，表示默认不参与读空气回复）",
+    "hint": "只控制私聊能否进入回复链路；私聊是否写入历史由 enable_private_chat_storage 独立控制。如需让私聊参与读空气，请改为 blacklist 或把目标用户加入 whitelist。",
+    "options": ["blacklist", "whitelist"],
+    "default": "whitelist"
+  },
+  "private_list": {
+    "type": "list",
+    "description": "私聊准入列表（用户 ID 字符串）。whitelist 模式下仅列表内用户能进入回复链路。",
+    "default": []
+  },
+
+  "group_user_blacklist": {
+    "type": "list",
+    "description": "用户黑名单（命中则不触发回复，但仍允许按规则写入历史）",
+    "default": []
+  },
+  "trigger_keywords": {
+    "type": "list",
+    "description": "触发关键词（子串匹配；命中后强制进入主回复）",
+    "default": []
+  },
+  "block_keywords": {
+    "type": "list",
+    "description": "屏蔽关键词（命中则不触发回复，允许写入历史；窗口内附着消息命中则不附着）",
+    "default": []
+  },
+  "response_probability": {
+    "type": "float",
+    "description": "未命中 trigger 时的概率采样（0.0–1.0）",
+    "default": 0.0
+  },
+  "ai_judge_provider": {
+    "type": "string",
+    "description": "读空气（AI 判定）使用的 chat provider ID；留空则关闭 AI 判定，概率通过即进入主回复。",
+    "hint": "请选择 chat provider，不要选 TTS/STT/Embedding。",
+    "_special": "select_provider",
+    "default": ""
+  },
+  "ai_judge_prompt": {
+    "type": "text",
+    "description": "AI 判定的 system prompt；要求模型输出 REPLY 或 SKIP。",
+    "default": "你是群聊读空气助手。基于【历史】与【当前消息】判断机器人此时是否应该开口。只输出一个 token：REPLY 或 SKIP。不要解释。"
+  },
+
+  "enable_debounce": {
+    "type": "bool",
+    "description": "启用当前消息防抖窗口",
+    "default": true
+  },
+  "debounce_min_wait_seconds": {
+    "type": "float",
+    "description": "防抖最小等待（秒），每条附着消息重置该计时器",
+    "default": 1.5
+  },
+  "debounce_max_wait_seconds": {
+    "type": "float",
+    "description": "防抖硬性上限（秒），超过则强制关窗",
+    "default": 6.0
+  },
+  "debounce_concurrent_limit": {
+    "type": "int",
+    "description": "单个 UMO 内允许同时存在的活跃防抖窗口数上限",
+    "default": 4
+  },
+
+  "storage_max_count": {
+    "type": "int",
+    "description": "主历史账本单文件最多保留条数（超出从头裁剪）",
+    "default": 400
+  },
+  "context_message_limit": {
+    "type": "int",
+    "description": "注入版 History 最多携带的最近记录条数",
+    "default": 40
+  },
+  "enable_private_chat_storage": {
+    "type": "bool",
+    "description": "私聊是否写入主历史账本（默认 false，与私聊准入互不替代）",
+    "hint": "默认关闭，避免私聊被无差别落盘。需要时显式开启。",
+    "default": false
+  },
+  "store_tool_result_in_history": {
+    "type": "bool",
+    "description": "是否把 tool_result 记录写入主历史账本",
+    "default": false
+  },
+  "store_tool_call_in_history": {
+    "type": "bool",
+    "description": "是否把 tool_call 记录写入主历史账本",
+    "default": false
+  },
+  "store_proactive_sent_message_in_history": {
+    "type": "bool",
+    "description": "是否把主动发送的消息写入主历史账本",
+    "default": true
+  },
+  "store_task_created_in_history": {
+    "type": "bool",
+    "description": "是否把 task_created 事件写入主历史账本（调试用）",
+    "default": false
+  },
+  "store_task_summary_in_history": {
+    "type": "bool",
+    "description": "是否把 task_summary 事件写入主历史账本",
+    "default": false
+  }
+}
